@@ -1,0 +1,89 @@
+---
+title: "Pew data set"
+author: "Stas Kolenikov"
+date: "October 25, 2019"
+output: html_document
+params: 
+  data: June16
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# A template for analysis of Pew political polls data sets
+
+This is an example of a stylized analysis of the data sets that have common variables.
+I am using Pew Research Center data as they have similar structure and some common variables.
+For full description and data use license, please see <http://www.people-press.org/datasets/2016/>.
+
+The current analysis deals with `r params$data` data set.
+
+## Required libraries
+
+The basic functionality of `R` is fairly limited, so nearly any analysis requires loading additional
+modules, referred to as libraries, that contain code developed by third party programmers
+to manipulate data, produce graphs and tables, run statistical models, and more.
+For this document, we would need the following libraries:
+
+```{r libraries, message=FALSE, warning=FALSE}
+library(foreign)     # to read SPSS data sets
+library(survey)      # to run analyses with weights
+library(ggplot2)     # to produce plots
+library(stringr)     # to manipulate the graph labels
+library(here)        # to set up relative paths
+```
+
+## Loading the data
+
+```{r usespss}
+data_set_name <- paste0(params$data, " public.sav")
+cat("Data set processed: ", data_set_name, "\n")
+pew_data <- read.spss(here("data",data_set_name),to.data.frame=TRUE)
+```
+
+As we see from the warning output, not everything in R is fully compatible with SPSS.
+
+## Sample sizes
+
+This data set contains `r nrow(pew_data)` observations. The breakdown between landline and cellphones is
+as follows:
+
+```{r frame}
+table(pew_data$sample)
+```
+
+## Analysis with weights
+
+A common question asked in all Pew surveys is
+
+> PARTY. In politics TODAY, do you consider yourself a
+Republican, Democrat, or independent?
+
+This is the weighted tabulation of that variable:
+
+```{r svytab_party}
+pew_data_w <- svydesign(~1,data=pew_data, weights=~weight)
+(meanparty <- svymean(~party,pew_data_w))  
+# the parenthesis is a way to both run the assignment and display results
+```
+
+This is the graphical representation:
+
+```{r ggplot_party}
+ggplot(data.frame(est=100*coef(meanparty),upci=100*(coef(meanparty)+2*SE(meanparty)),
+                   loci=100*(coef(meanparty)-2*SE(meanparty)),
+                   cat=str_replace(names(coef(meanparty)),"party","") ) ) +
+  geom_pointrange(aes(x=cat,y=est,ymax=upci,ymin=loci)) +
+  labs(x='Party ID',y='Percent %') + coord_flip()
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>. This document was produced on `r Sys.time()` using `r R.version.string`. The following packages were used:
+
+* `foreign` package version `r packageVersion("foreign")`
+* `survey` package version `r packageVersion("survey")` 
+* `ggplot2` version `r packageVersion("ggplot2")`
+* `stringr` version `r packageVersion("stringr")`
+* `here` version `r packageVersion("here")`
