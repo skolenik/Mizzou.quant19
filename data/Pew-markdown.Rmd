@@ -36,7 +36,7 @@ library(here)        # to set up relative paths
 
 ## Loading the data
 
-```{r usespss}
+```{r usespss, warning=FALSE}
 data_set_name <- paste0(params$data, " public.sav")
 cat("Data set processed: ", data_set_name, "\n")
 pew_data <- read.spss(here("data",data_set_name),to.data.frame=TRUE)
