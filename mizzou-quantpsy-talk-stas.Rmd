@@ -3,10 +3,6 @@ title: "Industry, Markdown, and Version Control"
 author: "Stas Kolenikov"
 date: "October 25, 2019"
 output: 
-  ioslides_presentation:
-  rmdshower::shower_presentation:
-    self_contained: true
-    ratio: 16x10
   xaringan::moon_reader:
     lib_dir: libs
     css: ["xaringan-themer.css"]
@@ -14,6 +10,10 @@ output:
       highlightStyle: solarized-dark
       highlightLines: true
       countIncrementalSlides: false
+  rmdshower::shower_presentation:
+    self_contained: true
+    ratio: 16x10
+# output:  ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -36,6 +36,7 @@ solarized_dark()
 
 ## Do as I say, not as I do
 
+- High School in Math and Physics 1990
 - MEEE 1996
 - MSc Economics 1998
 - Think tank economist 1998--2000
@@ -47,6 +48,8 @@ solarized_dark()
 ---
 
 ## How is industry experience different from academia?
+
+--
 
 - what is valued
 - teams
@@ -106,54 +109,7 @@ Markdown modifies this to a very bare bones, text-only, no-mouse-selection-neede
 
 https://daringfireball.net/projects/markdown/syntax
 
----
-
-## Data analysis withing a slide
-
-```{r shiny_snippet, echo = FALSE, warning = FALSE}
-kmeans_cluster <- function(dataset) { 
-  
-  require(shiny)  
-  
-  shinyApp(
-    ui = fluidPage(
-      fluidRow(style = "padding-bottom: 20px;",
-        column(4, selectInput('xcol', 'X Variable', names(dataset))),
-        column(4, selectInput('ycol', 'Y Variable', names(dataset),
-                              selected=names(dataset)[[2]])),
-        column(4, numericInput('clusters', 'Cluster count', 3,
-                               min = 1, max = 9))
-      ),
-      fluidRow(
-        plotOutput('kmeans', height = "400px")  
-      )
-    ),
-    
-    server = function(input, output, session) {
-      
-      # Combine the selected variables into a new data frame
-      selectedData <- reactive({
-        dataset[, c(input$xcol, input$ycol)]
-      })
-      
-      clusters <- reactive({
-        kmeans(selectedData(), input$clusters)
-      })
-      
-      output$kmeans <- renderPlot(height = 400, {
-        par(mar = c(5.1, 4.1, 0, 1))
-        plot(selectedData(),
-             col = clusters()$cluster,
-             pch = 20, cex = 3)
-        points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
-      })
-    },
-    
-    options = list(height = 500)
-  )
-}
-kmeans_cluster(iris)
-```
+https://www.markdowntutorial.com/
 
 ---
 
@@ -185,7 +141,7 @@ Additionally, R and some other languages can
 
 ... into Markdown documents
 
-[Pew report](Pew-markdown.html)
+[Pew report](data/Pew-markdown-June16.html)
 
 ```{r countdown}
 countdown(minutes=1,seconds=30)
@@ -201,51 +157,19 @@ The most advanced forms of markdown documents use inputs/parameters.
 - Task to perform: analysis vs. reporting the results
 - Input data files
 
+```
+library(here)
+target_date <- 'June16'
+rmarkdown::render(input=here("data","Pew-markdown.Rmd"),
+  output_file = here("data", paste0("Pew-markdown-",target_date,".html")),
+  params=list(data=target_date) )
+```
+
 ---
 
 ## Copy-paste vs. markdown
 
 ![](copy-paste.jfif)
-
----
-
-## Tidyverse
-
-https://www.tidyverse.org/
-
-The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. 
-
----
-
-## Pipes to do steps in sequence
-
-![](magritr.png)
-
----
-
-## Verbs for data management tasks
-
-What does this code do?
-
-```
-Pew_data %>% 
-  filter(party5==1) %>%
-  group_by(q1a) %>%
-  summarize(n=n())
-```
-
----
-
-## Verbs for data management tasks
-
-What does this code do?
-
-```
-Pew_data %>%            # data set
-  filter(party5==1) %>% # select cases
-  group_by(q1a) %>%     # set up a group variable 
-  summarize(n=n())      # count
-```
 
 ---
 
@@ -267,7 +191,7 @@ and a myriad of extentions to it.
 
 ## Tables
 
-```{r}
+```{r moe_table}
 readRDS(here('KFF_MOE.Rds')) %>% 
   select(Group, `N (unweighted)`,MOE) %>%  
   kable() %>% kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
