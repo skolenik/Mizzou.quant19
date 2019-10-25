@@ -10,6 +10,7 @@ output:
       highlightStyle: solarized-dark
       highlightLines: true
       countIncrementalSlides: false
+      # ratio: 16:9
   rmdshower::shower_presentation:
     self_contained: true
     ratio: 16x10

@@ -104,6 +104,8 @@ Markdown modifies this to a very bare bones, text-only, no-mouse-selection-neede
 
 https://daringfireball.net/projects/markdown/syntax
 
+https://www.markdowntutorial.com/
+
 
 ---
 
@@ -135,11 +137,19 @@ Additionally, R and some other languages can
 
 ... into Markdown documents
 
-[Pew report](Pew-markdown.html)
+[Pew report](data/Pew-markdown-June16.html)
 
-<div class="countdown" id="timer_5db253db" style="right:0;bottom:0;" data-warnwhen="0">
+<div class="countdown" id="timer_5db31c2c" style="right:0;bottom:0;" data-warnwhen="0">
 <code class="countdown-time"><span class="countdown-digits minutes">01</span><span class="countdown-digits colon">:</span><span class="countdown-digits seconds">30</span></code>
 </div>
+
+---
+
+## Do some data analysis in the middle of the presentation?
+
+http://127.0.0.1:3921/
+
+(Re-launch `Shiny-example.Rmd` if there is no server at that address.)
 
 ---
 
@@ -151,51 +161,19 @@ The most advanced forms of markdown documents use inputs/parameters.
 - Task to perform: analysis vs. reporting the results
 - Input data files
 
+```
+library(here)
+target_date &lt;- 'June16'
+rmarkdown::render(input=here("data","Pew-markdown.Rmd"),
+  output_file = here("data", paste0("Pew-markdown-",target_date,".html")),
+  params=list(data=target_date) )
+```
+
 ---
 
 ## Copy-paste vs. markdown
 
 ![](copy-paste.jfif)
-
----
-
-## Tidyverse
-
-https://www.tidyverse.org/
-
-The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. 
-
----
-
-## Pipes to do steps in sequence
-
-![](magritr.png)
-
----
-
-## Verbs for data management tasks
-
-What does this code do?
-
-```
-Pew_data %&gt;% 
-  filter(party5==1) %&gt;%
-  group_by(q1a) %&gt;%
-  summarize(n=n())
-```
-
----
-
-## Verbs for data management tasks
-
-What does this code do?
-
-```
-Pew_data %&gt;%            # data set
-  filter(party5==1) %&gt;% # select cases
-  group_by(q1a) %&gt;%     # set up a group variable 
-  summarize(n=n())      # count
-```
 
 ---
 
@@ -275,6 +253,12 @@ library(flextable)
 
 ---
 
+## Take it anywhere
+
+See examples at https://rmarkdown.rstudio.com/gallery.html
+
+---
+
 ## Version control
 
 ![](rainman.jpg)
@@ -285,7 +269,7 @@ library(flextable)
 
 This talk:
 
-https://github.com/skolenik/Mizzou.quant
+https://github.com/skolenik/Mizzou.quant19
 
 VCS training, of sorts (~1.5 hrs)
 
