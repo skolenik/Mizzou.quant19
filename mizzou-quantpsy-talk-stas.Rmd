@@ -1,0 +1,337 @@
+---
+title: "Industry, Markdown, and Version Control"
+author: "Stas Kolenikov"
+date: "October 25, 2019"
+output: 
+  ioslides_presentation:
+  rmdshower::shower_presentation:
+    self_contained: true
+    ratio: 16x10
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["xaringan-themer.css"]
+    nature:
+      highlightStyle: solarized-dark
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(here)
+library(kableExtra)
+library(tidyverse)
+library(xaringan)
+library(xaringanthemer)
+library(countdown)
+library(shiny)
+solarized_dark()
+```
+
+## Why I am here
+
+![](confused.gif)
+
+---
+
+## Do as I say, not as I do
+
+- MEEE 1996
+- MSc Economics 1998
+- Think tank economist 1998--2000
+- PhD in Statistics 2005 (missing data in spatio-temporal models)
+- Tenure track appointment at Mizzou 2005--2008
+- Stata developer 2010--2012
+- Survey statistician 2012--present
+
+---
+
+## How is industry experience different from academia?
+
+- what is valued
+- teams
+- communication
+- reporting and accountability
+
+---
+
+## My role
+
+- survey statistics
+- all of statistics
+- some of data science
+- workflows and reproducibility
+
+---
+
+## My take on software
+
+- One rectangular data set, analysis leading up to a handful of regresion tables: Stata
+- Develop and deploy algorithms on web: Python, Java
+- Produce reports: R
+
+---
+
+## Building blocks of my workflow
+
+- RMarkdown
+- R tidyverse
+- Version control
+- Cheat sheets
+
+Nicely packaged within RStudio
+
+- Google and Twitter
+
+---
+
+## Markdown
+
+![](markdown-everywhere.jpg)
+
+---
+
+## Markdown
+
+
+When you make your text **bold**, or _italic_, or create
+
+- items in lists
+- and more items
+
+you are marking certain elements of your text to be formated in a special way.
+(The heading above is also marked text.)
+
+Markdown modifies this to a very bare bones, text-only, no-mouse-selection-needed process.
+
+https://daringfireball.net/projects/markdown/syntax
+
+---
+
+## Data analysis withing a slide
+
+```{r shiny_snippet, echo = FALSE, warning = FALSE}
+kmeans_cluster <- function(dataset) { 
+  
+  require(shiny)  
+  
+  shinyApp(
+    ui = fluidPage(
+      fluidRow(style = "padding-bottom: 20px;",
+        column(4, selectInput('xcol', 'X Variable', names(dataset))),
+        column(4, selectInput('ycol', 'Y Variable', names(dataset),
+                              selected=names(dataset)[[2]])),
+        column(4, numericInput('clusters', 'Cluster count', 3,
+                               min = 1, max = 9))
+      ),
+      fluidRow(
+        plotOutput('kmeans', height = "400px")  
+      )
+    ),
+    
+    server = function(input, output, session) {
+      
+      # Combine the selected variables into a new data frame
+      selectedData <- reactive({
+        dataset[, c(input$xcol, input$ycol)]
+      })
+      
+      clusters <- reactive({
+        kmeans(selectedData(), input$clusters)
+      })
+      
+      output$kmeans <- renderPlot(height = 400, {
+        par(mar = c(5.1, 4.1, 0, 1))
+        plot(selectedData(),
+             col = clusters()$cluster,
+             pch = 20, cex = 3)
+        points(clusters()$centers, pch = 4, cex = 4, lwd = 4)
+      })
+    },
+    
+    options = list(height = 500)
+  )
+}
+kmeans_cluster(iris)
+```
+
+---
+
+## Markdown elements
+
+```
+`code`
+
+_italics_
+
+*bold*
+
+### Heading 3
+
+- unnumbered item
+
+1. numbered item
+```
+
+
+---
+
+## R Markdown
+
+Additionally, R and some other languages can 
+
+- incorporate source code 
+- incorporate output, such as numbers, tables, and plots
+
+... into Markdown documents
+
+[Pew report](Pew-markdown.html)
+
+```{r countdown}
+countdown(minutes=1,seconds=30)
+```
+
+---
+
+## Parametric markdown documents
+
+The most advanced forms of markdown documents use inputs/parameters.
+
+- Output format: HTML (the most flexible, and the only interactive), Word, PDF (requires LaTeX)
+- Task to perform: analysis vs. reporting the results
+- Input data files
+
+---
+
+## Copy-paste vs. markdown
+
+![](copy-paste.jfif)
+
+---
+
+## Tidyverse
+
+https://www.tidyverse.org/
+
+The tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures. 
+
+---
+
+## Pipes to do steps in sequence
+
+![](magritr.png)
+
+---
+
+## Verbs for data management tasks
+
+What does this code do?
+
+```
+Pew_data %>% 
+  filter(party5==1) %>%
+  group_by(q1a) %>%
+  summarize(n=n())
+```
+
+---
+
+## Verbs for data management tasks
+
+What does this code do?
+
+```
+Pew_data %>%            # data set
+  filter(party5==1) %>% # select cases
+  group_by(q1a) %>%     # set up a group variable 
+  summarize(n=n())      # count
+```
+
+---
+
+## Cheatsheets
+
+https://www.rstudio.com/resources/cheatsheets/
+
+---
+
+## Graphics
+
+```
+library(ggplot2)
+```
+
+and a myriad of extentions to it.
+
+---
+
+## Tables
+
+```{r}
+readRDS(here('KFF_MOE.Rds')) %>% 
+  select(Group, `N (unweighted)`,MOE) %>%  
+  kable() %>% kable_styling(bootstrap_options = c("striped", "hover", "condensed"))
+```
+
+A lot of output looks like a table already
+
+```
+# aimed at HTML
+library(kableExtra)
+# aimed specifically at MS products
+library(flextable)
+```
+
+---
+
+## Version control
+
+![](rainman.jpg)
+
+---
+
+## Version control
+
+This talk:
+
+https://github.com/skolenik/Mizzou.quant
+
+VCS training, of sorts (~1.5 hrs)
+
+https://github.com/skolenik/shower-vcs
+
+---
+
+## Code version control in R
+
+https://happygitwithr.com/ by @JennyBryan
+
+- a reasonably complete introduction to using Git with RStudio
+
+---
+
+## Do something
+
+```
+x <- 1
+y <- 2
+```
+
+---
+
+## Takeaways (hopefully)
+
+- Tools are important in both academia and industry
+- Reproducible workflow is important
+      + may take some extra time to set up, pays back handsomely when you need to redo
+- No analysis without markdown
+- No code without version control
+- Presentations in Markdown
+
+---
+
+## Thanks
+
+Stas Kolenikov
+
+Twitter [@StatStas](http://twitter.com/StatStas)

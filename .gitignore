@@ -2,9 +2,14 @@
 .Rhistory
 .RData
 .Ruserdata
-
 data/*.dta
 data/*.sav
 data/*.pdf
 data/*.docx
 data/*.zip
+*.gif
+*.png
+*.jpg
+*.Rds
+*.jfif
+libs/
