@@ -111,6 +111,7 @@ https://daringfireball.net/projects/markdown/syntax
 
 https://www.markdowntutorial.com/
 
+
 ---
 
 ## Markdown elements
@@ -146,6 +147,14 @@ Additionally, R and some other languages can
 ```{r countdown}
 countdown(minutes=1,seconds=30)
 ```
+
+---
+
+## Do some data analysis in the middle of the presentation?
+
+http://127.0.0.1:3921/
+
+(Re-launch `Shiny-example.Rmd` if there is no server at that address.)
 
 ---
 
@@ -208,6 +217,12 @@ library(flextable)
 
 ---
 
+## Take it anywhere
+
+See examples at https://rmarkdown.rstudio.com/gallery.html
+
+---
+
 ## Version control
 
 ![](rainman.jpg)
@@ -218,7 +233,7 @@ library(flextable)
 
 This talk:
 
-https://github.com/skolenik/Mizzou.quant
+https://github.com/skolenik/Mizzou.quant19
 
 VCS training, of sorts (~1.5 hrs)
 
